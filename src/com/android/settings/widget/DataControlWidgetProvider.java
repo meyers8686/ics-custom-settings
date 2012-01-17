@@ -31,7 +31,12 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
+import android.os.RemoteException;
+import android.os.ServiceManager;
+import android.os.SystemClock;
 import android.util.Log;
+import android.view.IWindowManager;
+import android.view.KeyEvent;
 import android.widget.RemoteViews;
 
 import com.android.settings.R;
@@ -51,6 +56,7 @@ public class DataControlWidgetProvider extends AppWidgetProvider {
   private static final int BUTTON_WIFI = 0;
   private static final int BUTTON_APN = 1;
   private static final int BUTTON_BLUETOOTH = 2;
+  private static final int BUTTON_SLEEP = 3;
 
   // This widget keeps track of two sets of states:
   // "3-state": STATE_DISABLED, STATE_ENABLED, STATE_INTERMEDIATE
@@ -73,7 +79,6 @@ public class DataControlWidgetProvider extends AppWidgetProvider {
   private static final int[] ind_data_DRAWABLE_MID = { R.drawable.appwidget_settings_ind_mid_l_holo, R.drawable.appwidget_settings_ind_mid_c_holo, R.drawable.appwidget_settings_ind_mid_r_holo };
 
   private static final int[] ind_data_DRAWABLE_ON = { R.drawable.appwidget_settings_ind_on_l_holo, R.drawable.appwidget_settings_ind_on_c_holo, R.drawable.appwidget_settings_ind_on_r_holo };
-
 
   private static final StateTracker sWifiState = new WifiStateTracker();
   private static final StateTracker sBluetoothState = new BluetoothStateTracker();
@@ -502,7 +507,6 @@ public class DataControlWidgetProvider extends AppWidgetProvider {
 	}
   }
 
-  
   @Override
   public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 	// Update each requested appWidgetId
@@ -533,6 +537,7 @@ public class DataControlWidgetProvider extends AppWidgetProvider {
 	views.setOnClickPendingIntent(R.id.btn_data_wifi, getLaunchPendingIntent(context, BUTTON_WIFI));
 	views.setOnClickPendingIntent(R.id.btn_data_bluetooth, getLaunchPendingIntent(context, BUTTON_BLUETOOTH));
 	views.setOnClickPendingIntent(R.id.btn_data_apn, getLaunchPendingIntent(context, BUTTON_APN));
+	views.setOnClickPendingIntent(R.id.btn_data_sleep, getLaunchPendingIntent(context, BUTTON_SLEEP));
 	views.setOnClickPendingIntent(R.id.btn_data_settings, getSettingsIntent(context));
 
 	updateButtons(views, context);
@@ -588,7 +593,7 @@ public class DataControlWidgetProvider extends AppWidgetProvider {
 	PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 	return pendingIntent;
   }
-  
+
   /**
    * Receives and processes a button pressed intent or state change.
    * 
@@ -600,7 +605,7 @@ public class DataControlWidgetProvider extends AppWidgetProvider {
   public void onReceive(Context context, Intent intent) {
 	super.onReceive(context, intent);
 	String action = intent.getAction();
-	Log.d(TAG, "onReceive action:"+action);
+	Log.d(TAG, "onReceive action:" + action);
 	if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) {
 	  sWifiState.onActualStateChange(context, intent);
 	} else if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
@@ -616,6 +621,19 @@ public class DataControlWidgetProvider extends AppWidgetProvider {
 		sBluetoothState.toggleState(context);
 	  } else if (buttonId == BUTTON_APN) {
 		sApnState.toggleState(context);
+	  } else if (buttonId == BUTTON_SLEEP) {
+		Log.d(TAG, "Going to SLEEP");
+		int eventCode = KeyEvent.KEYCODE_POWER;
+		long now = SystemClock.uptimeMillis();
+		Log.d(TAG, "SendKeyEvent:"+eventCode);
+		try {
+		  KeyEvent down = new KeyEvent(now, now, KeyEvent.ACTION_DOWN, eventCode, 0);
+		  KeyEvent up = new KeyEvent(now+50, now+50, KeyEvent.ACTION_UP, eventCode, 0);
+		  (IWindowManager.Stub.asInterface(ServiceManager.getService("window"))).injectKeyEvent(down, true);
+		  (IWindowManager.Stub.asInterface(ServiceManager.getService("window"))).injectKeyEvent(up, true);
+		} catch (RemoteException e) {
+		  Log.d(TAG, "SendKeyEvent exception:"+e.getMessage());
+		}
 	  }
 	} else {
 	  // Don't fall-through to updating the widget. The Intent
