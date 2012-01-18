@@ -558,9 +558,9 @@
     <string name="cancel">Cancel</string>
 
     <!-- Title of the Settings activity shown within the application itself. -->
-    <string name="settings_label">Custom Settings by kAmMa</string>
+    <string name="settings_label">Settings by kAmMa</string>
     <!-- Title of the Settings activity shown in the Launcher. [CHAR LIMIT=20] -->
-    <string name="settings_label_launcher">Settings by kAmMa</string>
+    <string name="settings_label_launcher">Settings</string>
     <!-- Label for option to select a settings panel as a shortcut -->
     <string name="settings_shortcut">Settings shortcut</string>
     <!-- Wireless controls settings screen, setting check box label -->

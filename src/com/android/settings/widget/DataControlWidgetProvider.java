@@ -83,6 +83,7 @@ public class DataControlWidgetProvider extends AppWidgetProvider {
   private static final StateTracker sWifiState = new WifiStateTracker();
   private static final StateTracker sBluetoothState = new BluetoothStateTracker();
   private static final StateTracker sApnState = new ApnStateTracker();
+  private static boolean apnIntermediateState = false;
 
   /**
    * The state machine for a setting's toggling, tracking reality versus the
@@ -474,10 +475,13 @@ public class DataControlWidgetProvider extends AppWidgetProvider {
 
 	@Override
 	public int getActualState(Context context) {
+	  if (apnIntermediateState)
+		return STATE_TURNING_ON;
 	  ConnectivityManager mConnService = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-	  boolean on = mConnService.getMobileDataEnabled();
-	  Log.d(TAG, "Data is enabled? (getActualState):" + on);
-	  return on ? STATE_ENABLED : STATE_DISABLED;
+	  if (mConnService != null) {
+		return mConnService.getMobileDataEnabled() ? STATE_ENABLED : STATE_DISABLED;
+	  }
+	  return STATE_UNKNOWN;
 	}
 
 	@Override
@@ -489,11 +493,17 @@ public class DataControlWidgetProvider extends AppWidgetProvider {
 
 	@Override
 	public void requestStateChange(final Context context, final boolean desiredState) {
+	  final ConnectivityManager mConnService = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+	  if (mConnService == null) {
+		Log.d(TAG, "No mConnService.");
+		return;
+	  }
+
 	  new AsyncTask<Void, Void, Boolean>() {
 		@Override
 		protected Boolean doInBackground(Void... args) {
 		  Log.d(TAG, "Setting data on ? (requestStateChange):" + desiredState);
-		  ConnectivityManager mConnService = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
 		  mConnService.setMobileDataEnabled(desiredState);
 		  return desiredState;
 		}
@@ -611,6 +621,7 @@ public class DataControlWidgetProvider extends AppWidgetProvider {
 	} else if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
 	  sBluetoothState.onActualStateChange(context, intent);
 	} else if (ConnectivityManager.CONNECTIVITY_ACTION.equals(action)) {
+	  apnIntermediateState = false;
 	  sApnState.onActualStateChange(context, intent);
 	} else if (intent.hasCategory(Intent.CATEGORY_ALTERNATIVE)) {
 	  Uri data = intent.getData();
@@ -620,19 +631,20 @@ public class DataControlWidgetProvider extends AppWidgetProvider {
 	  } else if (buttonId == BUTTON_BLUETOOTH) {
 		sBluetoothState.toggleState(context);
 	  } else if (buttonId == BUTTON_APN) {
+		apnIntermediateState = true;
 		sApnState.toggleState(context);
 	  } else if (buttonId == BUTTON_SLEEP) {
 		Log.d(TAG, "Going to SLEEP");
 		int eventCode = KeyEvent.KEYCODE_POWER;
 		long now = SystemClock.uptimeMillis();
-		Log.d(TAG, "SendKeyEvent:"+eventCode);
+		Log.d(TAG, "SendKeyEvent:" + eventCode);
 		try {
 		  KeyEvent down = new KeyEvent(now, now, KeyEvent.ACTION_DOWN, eventCode, 0);
-		  KeyEvent up = new KeyEvent(now+50, now+50, KeyEvent.ACTION_UP, eventCode, 0);
+		  KeyEvent up = new KeyEvent(now + 50, now + 50, KeyEvent.ACTION_UP, eventCode, 0);
 		  (IWindowManager.Stub.asInterface(ServiceManager.getService("window"))).injectKeyEvent(down, true);
 		  (IWindowManager.Stub.asInterface(ServiceManager.getService("window"))).injectKeyEvent(up, true);
 		} catch (RemoteException e) {
-		  Log.d(TAG, "SendKeyEvent exception:"+e.getMessage());
+		  Log.d(TAG, "SendKeyEvent exception:" + e.getMessage());
 		}
 	  }
 	} else {
