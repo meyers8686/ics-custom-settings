@@ -32,4 +32,10 @@
         android:summary="@string/usb_ptp_summary"
         />
 
+    <Preference
+        android:key="usb_tether"
+        android:title="@string/usb_tether_title"
+        android:summary="@string/usb_tether_summary"
+        />
+
 </PreferenceScreen>

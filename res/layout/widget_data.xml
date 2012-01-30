@@ -18,8 +18,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:background="@drawable/appwidget_bg_holo" >
+    android:gravity="center">
 
     <LinearLayout
         android:id="@+id/btn_data_wifi"
@@ -27,7 +26,6 @@
         android:layout_weight="1"
         android:layout_height="match_parent"
         android:paddingTop="12dp"
-        android:background="@drawable/appwidget_button_left"
         android:clickable="true"
         android:focusable="true"
         android:orientation="vertical">
@@ -48,19 +46,12 @@
             />
         </LinearLayout>
 
-    <ImageView
-        android:layout_width="1dip"
-        android:layout_height="match_parent"
-        android:background="@drawable/appwidget_settings_divider_holo"
-        />
-
     <LinearLayout
         android:id="@+id/btn_data_apn"
         android:layout_width="0dip"
         android:layout_weight="1"
         android:layout_height="match_parent"
         android:paddingTop="12dp"
-        android:background="@drawable/appwidget_button_left"
         android:clickable="true"
         android:focusable="true"
         android:orientation="vertical">
@@ -81,19 +72,12 @@
             />
         </LinearLayout>
 
-    <ImageView
-        android:layout_width="1dip"
-        android:layout_height="match_parent"
-        android:background="@drawable/appwidget_settings_divider_holo"
-        />
-
     <LinearLayout
         android:id="@+id/btn_data_bluetooth"
         android:layout_width="0dip"
         android:layout_weight="1"
         android:layout_height="match_parent"
         android:paddingTop="12dp"
-        android:background="@drawable/appwidget_button_center"
         android:clickable="true"
         android:focusable="true"
         android:orientation="vertical">
@@ -115,19 +99,12 @@
 
     </LinearLayout>
 
-    <ImageView
-        android:layout_width="1dip"
-        android:layout_height="match_parent"
-        android:background="@drawable/appwidget_settings_divider_holo"
-        />
-
     <LinearLayout
         android:id="@+id/btn_data_sleep"
         android:layout_width="0dip"
         android:layout_weight="1"
         android:layout_height="match_parent"
         android:paddingTop="12dp"
-        android:background="@drawable/appwidget_button_center"
         android:clickable="true"
         android:focusable="true"
         android:orientation="vertical">
@@ -150,19 +127,12 @@
             />
     </LinearLayout>
 
-    <ImageView
-        android:layout_width="1dip"
-        android:layout_height="match_parent"
-        android:background="@drawable/appwidget_settings_divider_holo"
-        />    
-
     <LinearLayout
         android:id="@+id/btn_data_settings"
         android:layout_width="0dip"
         android:layout_weight="1"
         android:layout_height="match_parent"
         android:paddingTop="12dp"
-        android:background="@drawable/appwidget_button_center"
         android:clickable="true"
         android:focusable="true"
         android:orientation="vertical">

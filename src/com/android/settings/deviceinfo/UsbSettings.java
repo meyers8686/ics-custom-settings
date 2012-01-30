@@ -16,21 +16,16 @@
 
 package com.android.settings.deviceinfo;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
-import android.content.ContentQueryMap;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.usb.UsbManager;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceScreen;
-import android.provider.Settings;
-import android.util.Log;
 
 import com.android.settings.R;
 import com.android.settings.SettingsPreferenceFragment;
@@ -45,10 +40,12 @@ public class UsbSettings extends SettingsPreferenceFragment {
 
     private static final String KEY_MTP = "usb_mtp";
     private static final String KEY_PTP = "usb_ptp";
+    private static final String KEY_TETHER = "usb_tether";
 
     private UsbManager mUsbManager;
     private CheckBoxPreference mMtp;
     private CheckBoxPreference mPtp;
+    private Preference mUsbTether;
 
     private final BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
         public void onReceive(Context content, Intent intent) {
@@ -66,6 +63,7 @@ public class UsbSettings extends SettingsPreferenceFragment {
 
         mMtp = (CheckBoxPreference)root.findPreference(KEY_MTP);
         mPtp = (CheckBoxPreference)root.findPreference(KEY_PTP);
+        mUsbTether = root.findPreference(KEY_TETHER);
 
         return root;
     }
@@ -116,6 +114,13 @@ public class UsbSettings extends SettingsPreferenceFragment {
         if (Utils.isMonkeyRunning()) {
             return true;
         }
+        
+        if (preference == mUsbTether) {
+          ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+          cm.setUsbTethering(true);
+          finish();
+        }
+        
         // temporary hack - using check boxes as radio buttons
         // don't allow unchecking them
         if (preference instanceof CheckBoxPreference) {
