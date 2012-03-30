@@ -39,7 +39,6 @@ import android.os.ServiceManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.widget.RemoteViews;
-
 import com.android.settings.R;
 import com.android.settings.bluetooth.LocalBluetoothAdapter;
 import com.android.settings.bluetooth.LocalBluetoothManager;

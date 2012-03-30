@@ -55,7 +55,7 @@
     <uses-permission android:name="android.permission.MANAGE_USB" />
     <uses-permission android:name="android.permission.SET_POINTER_SPEED" />
 
-    <application android:label="@string/settings_label_launcher"
+    <application android:label="@string/settings_label"
             android:icon="@mipmap/ic_launcher_settings"
             android:taskAffinity=""
             android:theme="@android:style/Theme.Holo"
@@ -1388,7 +1388,6 @@
                 <action android:name="android.bluetooth.adapter.action.STATE_CHANGED" />
                 <action android:name="android.location.PROVIDERS_CHANGED" />
                 <action android:name="com.android.sync.SYNC_CONN_STATUS_CHANGED" />
-		<action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/appwidget_info" />
         </receiver>
@@ -1407,6 +1406,5 @@
             </intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/appwidget_data_info" />
         </receiver>
-
     </application>
 </manifest>

@@ -124,6 +124,7 @@ public class LocationSettings extends SettingsPreferenceFragment
                 }
             };
         }
+
         mContentQueryMap.addObserver(mSettingsObserver);
     }
 
